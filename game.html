@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Climbing Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        #gameContainer {
+            text-align: center;
+            position: relative;
+            height: 100%;
+            width: 100px;
+        }
+        #character {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            position: absolute;
+            bottom: 0;
+        }
+        #floor {
+            width: 100px;
+            height: 10px;
+            background-color: black;
+            position: absolute;
+            bottom: 0;
+        }
+        #timeDisplay, #floorDisplay {
+            margin: 10px;
+        }
+        #clickButton {
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="timeDisplay">Time left: 10 seconds</div>
+        <div id="floorDisplay">Current floor: 0</div>
+        <div id="character"></div>
+        <div id="floor"></div>
+        <button id="clickButton">Jump</button>
+    </div>
+    <script>
+        let character = document.getElementById('character');
+        let gameContainer = document.getElementById('gameContainer');
+        let timeDisplay = document.getElementById('timeDisplay');
+        let floorDisplay = document.getElementById('floorDisplay');
+        let clickButton = document.getElementById('clickButton');
+        let floorHeight = 50; // גובה כל קומה
+        let currentFloor = 0;
+        let timeLeft = 10;
+        let interval = null;
+
+        function updateDisplays() {
+            timeDisplay.textContent = 'Time left: ' + timeLeft + ' seconds';
+            floorDisplay.textContent = 'Current floor: ' + currentFloor;
+        }
+
+        function startGame() {
+            if (interval) {
+                clearInterval(interval);
+            }
+
+            interval = setInterval(() => {
+                timeLeft--;
+                updateDisplays();
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    interval = null;
+                    alert('Time is up! You reached floor: ' + currentFloor);
+                    resetGame();
+                }
+            }, 1000);
+            updateDisplays();
+        }
+
+        function resetGame() {
+            currentFloor = 0;
+            timeLeft = 10;
+            character.style.bottom = '0px';
+            updateDisplays();
+            clickButton.disabled = false; // אפשרות לשחק שוב
+        }
+
+        function handleUserInput() {
+            if (timeLeft === 10 && !interval) {
+                startGame();
+            }
+            currentFloor++;
+            character.style.bottom = (currentFloor * floorHeight) + 'px';
+            updateDisplays();
+        }
+
+        clickButton.addEventListener('click', handleUserInput);
+        clickButton.addEventListener('touchstart', function(event) {
+            event.preventDefault(); // מניעת התנהגות ברירת מחדל
+            handleUserInput();
+        }, { passive: false });
+    </script>
+</body>
+</html>
